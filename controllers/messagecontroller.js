@@ -19,5 +19,9 @@ function Messages(severity, title, message) {
     msgBox.appendChild(h3)
     msgBox.appendChild(p)
     msgBox.appendChild(closeBTN)
-}
 
+
+    setTimeout(() => {
+        msgBox.classList.add('d-none')
+    }, 3000);
+}

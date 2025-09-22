@@ -1,5 +1,5 @@
 let loggedIn = false
-
+const serverURL = ""
 
 function navChangeIfLoggedIn() {
     if (loggedIn == true) {
@@ -12,3 +12,30 @@ function navChangeIfLoggedIn() {
     document.getElementById('loggedNav').setAttribute('d-none')
 
 }
+
+
+
+async function teszt() {
+    try {
+        const res = await fetch('http://localhost:3000/users/getUser', 
+        {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: {
+                nev: "Sauher",
+                email: "sauermostugrik@citromail.ru",
+                password: "SauherHentai6767"
+            }
+
+        })
+
+    } catch (err)
+    {
+        
+    }
+
+}
+
+teszt()

@@ -36,3 +36,29 @@ main{
     margin: 0 auto;
     width: fit-content;
 }
+
+
+#msgBox{
+    margin-top: 20px;
+}
+
+
+
+/*Profil oldal CSS*/
+
+#profileEmail, #profilelName, #profilePassword{
+    border: none;
+    border-bottom: 1px solid var(--bs-secondary);
+    color: var(--bs-secondary);
+    border-radius: 0;
+}
+
+.dataField{
+    display: flex;
+    justify-content: space-between;
+    
+}
+
+.dataField p{
+    margin: 0 auto;
+}

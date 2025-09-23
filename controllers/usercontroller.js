@@ -1,41 +1,90 @@
-let loggedIn = false
-const serverURL = ""
+//deklarálások
+
+let loggedIn = sessionStorage.getItem('loggedIn') ? sessionStorage.getItem('loggedIn') : false
+const serverURL = "http://localhost:3000"
+const passwdRegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+const regexMail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+sessionStorage.setItem("loggedIn", loggedIn)
+
 
 function navChangeIfLoggedIn() {
     if (loggedIn == true) {
-        document.getElementById('defaultNav').setAttribute('d-none')
-        document.getElementById('loggedNav').removeAttribute('d-none')
+        document.getElementById('defaultNav').classList.add('d-none')
+        document.getElementById('loggedNav').classList.remove('d-none')
         return
+    }                                                                                   // <------ Menü változtatása
+    else {
+        document.getElementById('defaultNav').classList.remove('d-none')
+        document.getElementById('loggedNav').classList.add('d-none')
+        return
+
     }
 
-    document.getElementById('defaultNav').removeAttribute('d-none')
-    document.getElementById('loggedNav').setAttribute('d-none')
+
 
 }
 
 
 
-async function teszt() {
+async function login() {
     try {
-        const res = await fetch('http://localhost:3000/users/getUser', 
+
+        let userEmail = document.getElementById('loginEmail')
+        let userPassword = document.getElementById('loginPassword')
+
+        // Beviteli mezők ellenőrzése
+
+        if (!userPassword.value || !userEmail.value || userEmail.value == '' || userPassword.value == '') {
+            Messages('danger', 'Sikertelen bejelentkezés', `Kitöltetlen adatok`)
+            return
+
+        }
+        else if (!regexMail.test(userEmail.value)) {
+            Messages('danger', 'Sikertelen bejelentkezés', `Helytelen e-mail`)
+            return
+        }
+        else if (!passwdRegExp.test(userPassword.value)) {
+            Messages('danger', 'Sikertelen bejelentkezés', `A jelszónak 8 karakterből kell álljon, tartalmaznia kell kis betűt, nagy betűt és számot`)
+            return
+
+        }
+
+
+        Messages('success', 'Sikeres bejelentkezés', '')
+
+
+        const res = await fetch(`${serverURL}/users/login`,
         {
-            method: "POST",
+            method: "POST",                                                             // <------ Login API hívás
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: {
-                nev: "Sauher",
-                email: "sauermostugrik@citromail.ru",
-                password: "SauherHentai6767"
-            }
+            body: JSON.stringify({
+                email: userEmail.value,
+                password: userPassword.value
+            })
 
         })
 
-    } catch (err)
-    {
+        
+
+    const data = await res.json()
+
+    if (res.status == 200 && data != null) {
+        loggedIn = true
+        navChangeIfLoggedIn()
         
     }
+    else{
+        loggedIn = false
+    }
+}
+
+    catch (err) {
+    Messages('danger', 'Sikertelen bejelentkezés', `${err}`)
+    console.log(err)
+}
 
 }
 
-teszt()
+navChangeIfLoggedIn()

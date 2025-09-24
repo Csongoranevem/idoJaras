@@ -4,6 +4,25 @@ let main = document.getElementById('mainDiv')
 async function Render(view) {
     main.innerHTML = await (await fetch(`views/${view}.html`)).text()
 
+
+    switch (view) {
+        case 'logout':
+            logout()
+            break;
+        
+        case 'profile':
+            profileDataFill()
+            break;
+    
+        case 'statistics':
+            getChartData()
+            initChart()
+        default:
+            break;
+    }
+    
+
+
 }
 
 

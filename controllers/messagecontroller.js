@@ -1,5 +1,5 @@
 
-
+//Értesítő üzenetek függvénye
 function Messages(severity, title, message) {
     let msgBox = document.getElementById('msgBox')
     msgBox.innerHTML = ''

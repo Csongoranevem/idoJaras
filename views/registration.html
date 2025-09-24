@@ -1,19 +1,19 @@
 <div class="mb-3">
-    <label for="loginName" class="form-label">Név</label>
+    <label for="registrationName" class="form-label">Név</label>
     <input type="email" class="form-control" id="registrationName" placeholder="Gipsz Jakab">
 </div>
 <div class="mb-3">
-    <label for="loginEmail" class="form-label">Email cím</label>
-    <input type="email" class="form-control" id="registrationEmail" placeholder="teszt@teszt.hu">
+    <label for="registrationEmail" class="form-label">Email cím</label>
+    <input type="email" class="form-control" id="registrationEmail" placeholder="teszt@teszt.hu" required>
 </div>
 <div class="mb-3">
-    <label for="loginPassword" class="form-label">Jelszó</label>
-    <input type="password" class="form-control" id="registrationPassword">
+    <label for="registrationPassword" class="form-label">Jelszó</label>
+    <input type="password" class="form-control" id="registrationPassword" required>
 </div>
 <div class="mb-3">
-    <label for="loginPassword" class="form-label">Jelszó újra</label>
-    <input type="password" class="form-control" id="registrationPasswordAgain">
+    <label for="registrationPasswordAgain" class="form-label">Jelszó újra</label>
+    <input type="password" class="form-control" id="registrationPasswordAgain" required>
 </div>
 
 
-<button class="btn btn-secondary col mb-3 mt-2">Regisztráció</button>
+<button class="btn btn-secondary col mb-3 mt-2" onclick="registration()">Regisztráció</button>

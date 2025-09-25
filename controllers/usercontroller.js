@@ -14,7 +14,7 @@ function navChangeIfLoggedIn() {
     }                                                                                   // <------ Menü változtatása
     else {
         document.getElementById('defaultNav').classList.remove('d-none')
-        document.getElementById('loggedNav').classList.remove('d-none')
+        document.getElementById('loggedNav').classList.add('d-none')
         return
 
     }
@@ -51,39 +51,77 @@ async function login() {
 
 
         const res = await fetch(`${serverURL}/users/login`,
-        {
-            method: "POST",                                                             // <------ Login API hívás
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: userEmail.value,
-                password: userPassword.value
+            {
+                method: "POST",                                                             // <------ Login API hívás
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: userEmail.value,
+                    password: userPassword.value
+                })
+
             })
 
-        })
 
-        
 
-    const data = await res.json()
+        const data = await res.json()
 
-    if (res.status == 200 && data != null) {
-        loggedIn = true
-        sessionStorage.setItem("loggedIn", loggedIn)
-        Messages('success', 'Sikeres bejelentkezés', '')
-        navChangeIfLoggedIn()
+        if (res.status == 200 && data != null) {
+            loggedIn = true
+            sessionStorage.setItem("loggedIn", loggedIn)
+            Messages('success', 'Sikeres bejelentkezés', '')
+            navChangeIfLoggedIn()
 
+        }
+        else {
+            loggedIn = false
+        }
     }
-    else{
-        loggedIn = false
-    }
-}
 
     catch (err) {
-    Messages('danger', 'Sikertelen bejelentkezés', `${err}`)
-    console.log(err)
+        Messages('danger', 'Sikertelen bejelentkezés', `${err}`)
+        console.log(err)
+    }
+
 }
 
+async function registration() {
+
+    let name = document.getElementById('registrationName')
+    let email = document.getElementById('registrationEmail')
+    let password = document.getElementById('registrationPassword')
+    let passwordAgain = document.getElementById('registrationPasswordAgain')
+
+
+    try {
+        const res = await fetch(`${serverURL}/users/registration`,
+            {
+                method: "POST",                                                             // <------ Login API hívás
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: name.value,
+                    email: email.value,
+                    password: password.value
+
+
+                })
+
+            })
+
+
+            console.log(name.value)
+        if (res.status == 200 && data != null) {
+            Messages('success', 'Sikeres bejelentkezés', '')
+
+        }
+    } catch (err) {
+        Messages('danger', 'Sikertelen bejelentkezés', `${err}`)
+        console.log(err)
+
+    }
 }
 
 navChangeIfLoggedIn()

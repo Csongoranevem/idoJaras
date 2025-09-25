@@ -4,7 +4,6 @@ let loggedIn = sessionStorage.getItem('loggedIn') ? sessionStorage.getItem('logg
 const serverURL = "http://localhost:3000"
 const passwdRegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 const regexMail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-sessionStorage.setItem("loggedIn", loggedIn)
 
 
 function navChangeIfLoggedIn() {
@@ -15,7 +14,7 @@ function navChangeIfLoggedIn() {
     }                                                                                   // <------ Menü változtatása
     else {
         document.getElementById('defaultNav').classList.remove('d-none')
-        document.getElementById('loggedNav').classList.add('d-none')
+        document.getElementById('loggedNav').classList.remove('d-none')
         return
 
     }
@@ -50,8 +49,6 @@ async function login() {
         }
 
 
-        Messages('success', 'Sikeres bejelentkezés', '')
-
 
         const res = await fetch(`${serverURL}/users/login`,
         {
@@ -72,8 +69,10 @@ async function login() {
 
     if (res.status == 200 && data != null) {
         loggedIn = true
+        sessionStorage.setItem("loggedIn", loggedIn)
+        Messages('success', 'Sikeres bejelentkezés', '')
         navChangeIfLoggedIn()
-        
+
     }
     else{
         loggedIn = false

@@ -1,10 +1,10 @@
 //deklarálások
 
-let loggedIn = sessionStorage.getItem('loggedIn') ? sessionStorage.getItem('loggedIn') : false
+let loggedIn = sessionStorage.getItem('loggedIn') === 'true' ? true : false;
 const serverURL = "http://localhost:3000"
 const passwdRegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 const regexMail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
+let loggedID = sessionStorage.getItem('loggedID') ? Number(sessionStorage.getItem('loggedID')) : null;
 
 function navChangeIfLoggedIn() {
     if (loggedIn == true) {
@@ -18,12 +18,7 @@ function navChangeIfLoggedIn() {
         return
 
     }
-
-
-
 }
-
-
 
 async function login() {
     try {
@@ -48,8 +43,6 @@ async function login() {
 
         }
 
-
-
         const res = await fetch(`${serverURL}/users/login`,
             {
                 method: "POST",                                                             // <------ Login API hívás
@@ -60,30 +53,27 @@ async function login() {
                     email: userEmail.value,
                     password: userPassword.value
                 })
-
             })
-
-
-
         const data = await res.json()
-
         if (res.status == 200 && data != null) {
             loggedIn = true
+            loggedID = data.id
+            sessionStorage.setItem('loggedID', loggedID)
             sessionStorage.setItem("loggedIn", loggedIn)
             Messages('success', 'Sikeres bejelentkezés', '')
             navChangeIfLoggedIn()
-
         }
         else {
-            loggedIn = false
+            loggedIn = false;
+            loggedID = null;
+            sessionStorage.removeItem('loggedIn');
+            sessionStorage.removeItem('loggedID');
         }
     }
-
     catch (err) {
         Messages('danger', 'Sikertelen bejelentkezés', `${err}`)
         console.log(err)
     }
-
 }
 
 async function registration() {
@@ -92,7 +82,6 @@ async function registration() {
     let email = document.getElementById('registrationEmail')
     let password = document.getElementById('registrationPassword')
     let passwordAgain = document.getElementById('registrationPasswordAgain')
-
 
     try {
         const res = await fetch(`${serverURL}/users/registration`,
@@ -105,23 +94,28 @@ async function registration() {
                     name: name.value,
                     email: email.value,
                     password: password.value
-
-
                 })
-
             })
 
 
-            console.log(name.value)
-        if (res.status == 200 && data != null) {
-            Messages('success', 'Sikeres bejelentkezés', '')
 
+        let data = res.json()
+
+        console.log(data)
+
+        if (res.status == 200 && data != null) {
+            Messages('success', 'Sikeres regisztráció', '')
         }
     } catch (err) {
-        Messages('danger', 'Sikertelen bejelentkezés', `${err}`)
+        Messages('danger', 'Sikertelen regisztráció', `${err}`)
         console.log(err)
-
     }
+}
+
+function logout() {
+    loggedID = null
+    loggedIn = false
+    sessionStorage.clear()
 }
 
 navChangeIfLoggedIn()

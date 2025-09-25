@@ -1,6 +1,11 @@
 
 
 async function addNewWeather() {
+    let newDate = document.getElementById('newDate')
+    let newType = document.getElementById('newType')
+    let newMin = document.getElementById('newMin')
+    let newMax = document.getElementById('newMax')
+
     try {
         const res = await fetch(`${serverURL}/weather/addNewWeather`,
             {
@@ -10,7 +15,10 @@ async function addNewWeather() {
                 },
                 body: JSON.stringify({
                     //adatok
-
+                    date: newDate.value,
+                    type: newType.value,
+                    min: newMin.value,
+                    max: newMax.value,
                 })
 
             })

@@ -17,6 +17,12 @@ async function Render(view) {
         case 'statistics':
             getChartData()
             initChart()
+        case 'newWeather':
+            setdate()
+            loadData()
+        case 'main':
+            await getCalendar()
+            initCalendar()
         default:
             break;
     }

@@ -8,7 +8,7 @@
 </div>
 <div class="mb-3">
     <label for="newMin" class="form-label">Min. Hőmérséklet</label>
-    <input type="number" class="form-control" id="newMin" >
+    <input type="number" class="form-control" id="newMin">
 
     <label for="newMax" class="form-label">Max. Hőmérséklet</label>
     <input type="number" class="form-control" id="newMax">
@@ -18,4 +18,23 @@
 </div>
 
 
-<button class="btn btn-secondary col mb-3 mt-2" onclick="WeatherRegistration()">Regisztráció</button>
+<button class="btn btn-secondary col mb-3 mt-2" onclick="addNewWeather()">Regisztráció</button>
+
+
+
+<hr>
+
+<table class="table">
+    <thead class="text-end" id="tableHead">
+        <tr>
+            <td>#</td>
+            <td>Időpont</td>
+            <td>Típus</td>
+            <td>Min. hőmérséklet</td>
+            <td>Max. hőmérséklet</td>
+        </tr>
+    </thead>
+    <tbody id="weathersTable"></tbody>
+    <tfoot></tfoot>
+
+</table>

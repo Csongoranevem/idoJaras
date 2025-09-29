@@ -27,7 +27,8 @@
             </div>
 
             <div id="loggedNav" class="">
-              <a class="nav-link" aria-current="page" onclick="Render('statistics')">Home</a>
+              <a class="nav-link" aria-current="page" onclick="Render('main')">Home</a>
+              <a class="nav-link" aria-current="page" onclick="Render('statistics')">Statisztika</a>
               <a class="nav-link" onclick="Render('newWeather')">Felvétel</a>
               <a class="nav-link" onclick="Render('profile')">Profilom</a>
               <a class="nav-link" onclick="Render('logout')">Kilépés</a>
@@ -47,8 +48,8 @@
 
     <!--Footer-->
     <footer>
-      <p class="h2">bszc-turr</p>
-      <p class="h4" id="footerDate">2025</p>
+      <!--<p class="h2">bszc-turr</p>
+      <p class="h4" id="footerDate">2025</p>-->
 
     </footer>
 
@@ -79,15 +80,15 @@
   <script src="assets/JS/bootstrap.min.js"></script>
   <!--main JS-->
   <script src="assets/JS/app.js"></script>
+  <!--Utils-->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js'></script>
   <!--controllers JS-->
   <script src="controllers/messagecontroller.js"></script>
   <script src="controllers/usercontroller.js"></script>
-  <script src="controllers/datacontroller.js"></script>
+  <script src="./controllers/datacontroller.js"></script>
   <script src="controllers/chartcontroller.js"></script>
   <script src="controllers/weathercontroller.js"></script>
-  <!--Utils-->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 </body>
 
 </html>

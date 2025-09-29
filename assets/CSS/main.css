@@ -7,6 +7,11 @@
     align-items: center;
 }
 
+
+.navbar{
+    border-radius: 0 0 10px 10px ;
+}
+
 #Nav{
     font-variant: small-caps;
 }
@@ -47,7 +52,7 @@ main{
 
 /*Profil oldal CSS*/
 
-.profileBanner{
+#profileBanner{
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -72,4 +77,23 @@ main{
 .dataField p{
     margin: 0 auto;
     height: 30px;
+}
+
+
+
+#tableHead{
+    font-weight: bold;
+}
+
+
+.modBTN{
+    border: var(--bs-secondary);
+    background-color: rgba(128, 128, 128, 0.267);
+    border-radius: 5px;
+    margin: 15px;
+    padding: 5px;
+}
+
+.nav-link{
+    cursor: pointer;
 }

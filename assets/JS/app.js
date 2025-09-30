@@ -8,6 +8,10 @@ async function Render(view) {
     switch (view) {
         case 'logout':
             logout()
+            setTimeout(() => {
+                navChangeIfLoggedIn()
+                Render('login')
+            }, 2000);
             break;
         
         case 'profile':
@@ -57,7 +61,7 @@ document.getElementById('lightTheme').addEventListener('click', () =>
         setTheme('light')
 
     })
-document.getElementById('darkTheme').addEventListener('click', () => 
+document.getElementById('darkTheme').addEventListener('click', () =>
     {
         saveTheme('dark')
         setTheme('dark')
@@ -65,8 +69,7 @@ document.getElementById('darkTheme').addEventListener('click', () =>
 
 function getTheme() {
     let chartTheme = localStorage.getItem('theme') == 'light' ? "light2" : "dark2"
-    Render('statistics')
-    return ch
+    return chartTheme
 }
 
 

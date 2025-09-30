@@ -81,6 +81,8 @@ main{
 .dataField p{
     margin: 0 auto;
     height: 30px;
+    display: flex;
+    justify-content: space-between;
 }
 
 

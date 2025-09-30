@@ -94,7 +94,7 @@ async function registration() {
     let password = document.getElementById('registrationPassword')
     let passwordAgain = document.getElementById('registrationPasswordAgain')
 
-    if (passwordAgain.value == "" || password.value == "" || email.value == "", name.value == "") {
+    if (passwordAgain.value == "" || password.value == "" || email.value == "" || name.value == "") {
         Messages('danger', 'Hiba', 'Kitöltetlen adatok')
     }
     else if (!passwdRegExp.test(password.value)) {
@@ -167,9 +167,7 @@ async function profileDataFill() {
 
 //------------------------ Profile mod ----------------------------
 
-
 function modProfile() {
-
     let profileName = document.getElementById('profileName')
     let profileEmail = document.getElementById('profileEmail')
     let profilePassword = document.getElementById('profilePassword')
@@ -179,24 +177,49 @@ function modProfile() {
         return
     }
     else if (!passwdRegExp.test(profilePassword.value)) {
-        Messages('danger', 'Sikertelen bejelentkezés', `A jelszónak 8 karakterből kell álljon, tartalmaznia kell kis betűt, nagy betűt és számot`)
+        Messages('danger', 'Sikertelen módosítás', `A jelszónak 8 karakterből kell álljon, tartalmaznia kell kis betűt, nagy betűt és számot`)
         return
     }
     else if (!regexMail.test(profileEmail.value)) {
-        Messages('danger', 'Sikertelen bejelentkezés', `Helytelen e-mail`)
+        Messages('danger', 'Sikertelen módosítás', `Helytelen e-mail`)
         return
     }
 
+    // Engedélyezzük a szerkesztést
     readonlyHandler(true)
-
-    
 }
 
-
-
 async function saveProfile() {
+    let profileName = document.getElementById('profileName')
+    let profileEmail = document.getElementById('profileEmail')
+    let profilePassword = document.getElementById('profilePassword')
+    let oldPasswordInput = document.getElementById('oldPassword')
 
     try {
+        // lekérjük a jelenlegi usert
+        const resUser = await fetch(`${serverURL}/users/getUser/${loggedID}`);
+        const currentUser = await resUser.json();
+
+        let oldPassword = null;
+
+        // ha változott a jelszó → kérjük be
+        if (profilePassword.value !== currentUser.password) {
+            if (!oldPasswordInput) {
+                // ha még nincs mező → jelenítsük meg
+                OldPasswordneeded();
+                Messages('warning', 'Figyelem', 'A jelszó módosításához add meg a régi jelszavad.');
+                return; // első kattintásnál csak kirakjuk a mezőt
+            } else {
+                // ha már van mező, akkor vegyük ki az értékét
+                oldPassword = oldPasswordInput.value;
+                if (!oldPassword) {
+                    Messages('danger', 'Hiba', 'Add meg a régi jelszavad.');
+                    return;
+                }
+            }
+        }
+
+        // PATCH kérés összeállítása
         const res = await fetch(`${serverURL}/users/modProfile`, {
             method: "PATCH",
             headers: {
@@ -206,43 +229,45 @@ async function saveProfile() {
                 id: loggedID,
                 name: profileName.value,
                 email: profileEmail.value,
-                password: profilePassword.value
+                password: profilePassword.value,
+                oldPassword: oldPassword
             })
-        })
-        let data = await res.json()
+        });
 
-        if (profilePassword.value != data.password) {
+        let data = await res.json();
 
-            OldPasswordneeded()
+        if (res.ok) {
+            Messages('success', 'Sikeres adatmódosítás.', '');
+        } else {
+            Messages('danger', 'Hiba', data.msg || 'Nem sikerült módosítani az adatokat.');
+            return;
         }
-
-        else{
-            Messages('success', 'Sikeres adatmódosítás.', '')
-        }
-
 
     } catch (err) {
-        Messages('danger', 'Hiba', 'Nem sikerült módosítani az adatokat.')
+        Messages('danger', 'Hiba', 'Nem sikerült módosítani az adatokat.');
+        console.error(err);
     }
 
-    profileDataFill()
-    readonlyHandler(false)
+    profileDataFill();
+    readonlyHandler(false);
 
+    // siker után töröljük az extra mezőt
+    if (oldPasswordInput) {
+        container.removeChild(dataField);
+    }
 }
 
-//Segédfüggvények a módosításhoz
+
 
 async function OldPasswordneeded() {
+    // ha már egyszer megjelenítettük, ne tegyük újra
+    if (document.getElementById('oldPassword')) return;
 
-    container.removeChild(dataField);
-
-
-    // Létrehozzuk a régi jelszó fieldjét
     dataField.className = 'dataField';
 
     const passwordLabel = document.createElement('p');
-    passwordLabel.className = 'profilePasswordAgain col-sm-4 col-lg-4';
-    passwordLabel.innerHTML = '<strong>Jelszó</strong>';
+    passwordLabel.className = 'profileOldPassword col-sm-4 col-lg-4';
+    passwordLabel.innerHTML = '<strong>Régi jelszó</strong>';
 
     const passwordInput = document.createElement('input');
     passwordInput.type = 'password';
@@ -253,24 +278,19 @@ async function OldPasswordneeded() {
     dataField.appendChild(passwordInput);
 
     container.appendChild(dataField);
-
-
-
 }
+
 
 function readonlyHandler(mod) {
     if (mod) {
         profileName.removeAttribute("readonly")
         profileEmail.removeAttribute("readonly")
         profilePassword.removeAttribute("readonly")
-
     }
     else {
         profileName.setAttribute("readonly", true)
         profileEmail.setAttribute("readonly", true)
         profilePassword.setAttribute("readonly", true)
-
     }
-
 }
 navChangeIfLoggedIn()

@@ -15,7 +15,8 @@ function initChart() {
             icon: icon,
             label: weatherdata.date,
             y: [Number(weatherdata.min), Number(weatherdata.max)],
-            name: weatherdata.type
+            name: weatherdata.type,
+            time: weatherdata.date
         }
 
         chartData.push(wObj)
@@ -35,7 +36,7 @@ function initChart() {
         },
         toolTip: {
             shared: true,
-            content: `<img src="${iconURL}${chartData[++i].icon}" alt=""> Időjárás:<strong>{name}</strong><br><strong>{y[0]}</strong>°C - <strong>{y[1]}</strong>°C `
+            content: `<p class="text-start">{time}</p> <br> Időjárás:<strong>{name}</strong><br><strong>{y[0]}</strong>°C - <strong>{y[1]}</strong>°C `
         },
         data: [{
             type: "rangeSplineArea",

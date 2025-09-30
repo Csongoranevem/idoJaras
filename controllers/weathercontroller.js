@@ -1,3 +1,5 @@
+let editingWeatherID = null
+
 function setdate() {
     let today = new Date().toISOString().split('T')[0]
     let dateField = document.getElementById('newDate')
@@ -16,35 +18,37 @@ async function addNewWeather() {
     let newMin = document.getElementById('newMin')
     let newMax = document.getElementById('newMax')
 
-
     if (newDate.value == "" || newType.value == "" || newMin.value == "" || newMax.value == "") {
         Messages('danger', 'Hiba', 'Kitöltetlen adatok')
         return
-
-    }
-    else if (newMin.value > newMax.value) {
+    } else if (parseFloat(newMin.value) > parseFloat(newMax.value)) {
         Messages('danger', 'Hiba', 'A minimum hőmérséklet nem lehet nagyobb, mint a maximum')
         return
-
     }
 
     try {
-        const res = await fetch(`${serverURL}/weather/addNewWeather`,
-            {
-                method: "POST",                                                             // <------ Login API hívás
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    //adatok
-                    userID: loggedID,
-                    date: newDate.value,
-                    type: newType.value,
-                    min: newMin.value,
-                    max: newMax.value,
-                })
+        let url = `${serverURL}/weather/addNewWeather`
+        let method = "POST"
 
+        // Módosítás
+        if (editingWeatherID) {
+            url = `${serverURL}/weather/modWeather/${editingWeatherID}`
+            method = "PATCH"
+        }
+
+        const res = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userID: loggedID,
+                date: newDate.value,
+                type: newType.value,
+                min: newMin.value,
+                max: newMax.value,
             })
+        })
 
         let data = await res.json()
 
@@ -52,12 +56,15 @@ async function addNewWeather() {
             Messages('warning', 'Hiba', 'Erre a napra már van beállítva időjárás')
         }
 
-        //console.log(data)
-
         if (res.status == 200 && data != null) {
-            Messages('success', 'Sikeres adatbevitel', '')
+            Messages('success', editingWeatherID ? 'Sikeres módosítás' : 'Sikeres adatbevitel', '')
         }
 
+        editingWeatherID = null
+        newDate.value = ''
+        newType.value = ''
+        newMin.value = ''
+        newMax.value = ''
 
     } catch (err) {
         Messages('danger', 'Sikertelen adatbevitel', `${err}`)
@@ -66,6 +73,7 @@ async function addNewWeather() {
 
     loadData()
 }
+
 
 
 //------------------------ Táblafeltöltés ----------------------------
@@ -89,34 +97,36 @@ async function loadData() {
 
 
 
+        //adatmezők létrahozása
         data.forEach(element => {
-
             let tr = document.createElement('tr')
             let weatherID = document.createElement('td')
             weatherID.classList.add('text-end')
-            weatherID.id = 'id'
+            weatherID.innerHTML = element.id + '.'
+
             let datumTD = document.createElement('td')
             datumTD.classList.add('text-end')
-            datumTD.id = 'date'
+            datumTD.innerHTML = element.date
+
             let typeTD = document.createElement('td')
             typeTD.classList.add('text-end')
-            typeTD.id = 'type'
+            typeTD.innerHTML = element.type
+
             let minTD = document.createElement('td')
             minTD.classList.add('text-end')
-            minTD.id = 'min'
+            minTD.innerHTML = element.min + '℃'
+
             let maxTD = document.createElement('td')
             maxTD.classList.add('text-end')
-            maxTD.id = 'max'
+            maxTD.innerHTML = element.max + '℃'
+
             let deleteBTN = document.createElement('span')
+            deleteBTN.innerHTML = `<button class="btn btn-danger" onclick="deleteWeather(${element.id})">X</button>`
 
-
-            weatherID.innerHTML = element.id + '.'
-            datumTD.innerHTML = element.date
-            typeTD.innerHTML = element.type
-            minTD.innerHTML = element.min + '℃'
-            maxTD.innerHTML += element.max + '℃'
-            deleteBTN.innerHTML = `<button class="btn btn-danger" id="deleteOne" onclick="deleteWeather(${element.id})">X</button>`
-
+            let modBTN = document.createElement('span')
+            modBTN.innerHTML = `<button class="btn btn-primary ms-2" onclick="prepareModWeather(${element.id}, '${element.date}', '${element.type}', ${element.min}, ${element.max})"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
+                </svg></button>`
 
             tr.appendChild(weatherID)
             tr.appendChild(datumTD)
@@ -124,25 +134,19 @@ async function loadData() {
             tr.appendChild(minTD)
             tr.appendChild(maxTD)
 
-            //A másik felhasználó által bevitt adatokat lehet látni, viszont törölni nem
             if (element.userID == loggedID) {
                 tr.appendChild(deleteBTN)
-            }
-            else {
+                tr.appendChild(modBTN)
+            } else {
                 let no = document.createElement('p')
-                no.innerHTML = "Nem törölhető"
+                no.innerHTML = "Nem módosítható"
                 no.style.color = "var(--bs-secondary)"
                 no.style.fontSize = "15px"
                 tr.appendChild(no)
             }
-            //tr.appendChild(modBTN)
 
             tbody.appendChild(tr)
-
-
-
         })
-
 
 
     } catch (err) {
@@ -174,58 +178,15 @@ async function deleteWeather(id) {
 }
 
 
-//adat módosítás
+//adat betöltése módosításkor
+function prepareModWeather(id, date, type, min, max) {
+    editingWeatherID = id
+    document.getElementById('newDate').value = date
+    document.getElementById('newType').value = type
+    document.getElementById('newMin').value = min
+    document.getElementById('newMax').value = max
+}
 
-
-/*
-async function modWeather(id) {
-    let dataID = document.getElementById('id')
-    let date = document.getElementById('date')
-    let type = document.getElementById('type')
-    let min = document.getElementById('min')
-    let max = document.getElementById('max')
-
-    let newDate = document.getElementById('newDate')
-    let newType = document.getElementById('newType')
-    let newMin = document.getElementById('newMin')
-    let newMax = document.getElementById('newMax')
-
-    newDate.value = date.innerHTML
-    newType.value = type.innerHTML
-    newMin.value = min.innerHTML
-    newMax.value = max.innerHTML
-    
-
-
-
-    
-
-
-    try {
-        const res = await fetch(`${serverURL}/weather/modWeather/`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: {
-                id: dataID,
-                date: newDate,
-                type: newType,
-                min: newMin,
-                max: newMax
-            }
-        })
-
-        data =  await res.json()
-
-
-    
-    } catch (err) {
-        ShowMessages('danger', 'Hiba', 'Hiba történt a törlés során! \n', err)
-    }
-
-    loadData()
-}*/
 
 
 

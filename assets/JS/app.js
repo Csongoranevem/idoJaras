@@ -15,8 +15,9 @@ async function Render(view) {
             break;
     
         case 'statistics':
-            getChartData()
+            await getChartData()
             initChart()
+            
         case 'newWeather':
             setdate()
             loadData()
@@ -61,5 +62,14 @@ document.getElementById('darkTheme').addEventListener('click', () =>
         saveTheme('dark')
         setTheme('dark')
     })
+
+function getTheme() {
+    let chartTheme = localStorage.getItem('theme') == 'light' ? "light2" : "dark2"
+    Render('statistics')
+    return ch
+}
+
+
+
 
 loadTheme()

@@ -22,7 +22,7 @@ async function addNewWeather() {
         return
 
     }
-    else if (newMin.value>newMax.value) {
+    else if (newMin.value > newMax.value) {
         Messages('danger', 'Hiba', 'A minimum hőmérséklet nem lehet nagyobb, mint a maximum')
         return
 
@@ -84,51 +84,69 @@ async function loadData() {
 
         const res = await fetch(`${serverURL}/weather/${loggedID}`)
 
-        data =  await res.json()
-        
+        data = await res.json()
 
 
 
-    data.forEach(element => {
 
-        let tr = document.createElement('tr')
-        let weatherID = document.createElement('td')
-        weatherID.classList.add('text-end')
-        let datumTD = document.createElement('td')
-        datumTD.classList.add('text-end')
-        let typeTD = document.createElement('td')
-        typeTD.classList.add('text-end')
-        let minTD = document.createElement('td')
-        minTD.classList.add('text-end')
-        let maxTD = document.createElement('td')
-        maxTD.classList.add('text-end')
-        let deleteBTN = document.createElement('span')
+        data.forEach(element => {
+
+            let tr = document.createElement('tr')
+            let weatherID = document.createElement('td')
+            weatherID.classList.add('text-end')
+            weatherID.id = 'id'
+            let datumTD = document.createElement('td')
+            datumTD.classList.add('text-end')
+            datumTD.id = 'date'
+            let typeTD = document.createElement('td')
+            typeTD.classList.add('text-end')
+            typeTD.id = 'type'
+            let minTD = document.createElement('td')
+            minTD.classList.add('text-end')
+            minTD.id = 'min'
+            let maxTD = document.createElement('td')
+            maxTD.classList.add('text-end')
+            maxTD.id = 'max'
+            let deleteBTN = document.createElement('span')
 
 
-        weatherID.innerHTML = element.id + '.'
-        datumTD.innerHTML = element.date
-        typeTD.innerHTML = element.type
-        minTD.innerHTML = element.min + '℃'
-        maxTD.innerHTML += element.max + '℃'
-        deleteBTN.innerHTML = `<button class="btn btn-danger" id="deleteOne" onclick="deleteWeather(${element.id})">X</button>`
+            weatherID.innerHTML = element.id + '.'
+            datumTD.innerHTML = element.date
+            typeTD.innerHTML = element.type
+            minTD.innerHTML = element.min + '℃'
+            maxTD.innerHTML += element.max + '℃'
+            deleteBTN.innerHTML = `<button class="btn btn-danger" id="deleteOne" onclick="deleteWeather(${element.id})">X</button>`
 
-        tr.appendChild(weatherID)
-        tr.appendChild(datumTD)
-        tr.appendChild(typeTD)
-        tr.appendChild(minTD)
-        tr.appendChild(maxTD)
-        tr.appendChild(deleteBTN)
 
-        tbody.appendChild(tr)
-        
+            tr.appendChild(weatherID)
+            tr.appendChild(datumTD)
+            tr.appendChild(typeTD)
+            tr.appendChild(minTD)
+            tr.appendChild(maxTD)
 
-        
-    })
+            //A másik felhasználó által bevitt adatokat lehet látni, viszont törölni nem
+            if (element.userID == loggedID) {
+                tr.appendChild(deleteBTN)
+            }
+            else {
+                let no = document.createElement('p')
+                no.innerHTML = "Nem törölhető"
+                no.style.color = "var(--bs-secondary)"
+                no.style.fontSize = "15px"
+                tr.appendChild(no)
+            }
+            //tr.appendChild(modBTN)
+
+            tbody.appendChild(tr)
+
+
+
+        })
 
 
 
     } catch (err) {
-        ShowMessages('danger', 'Hiba', 'Hiba történt a táblázat betöltése során! \n', err)
+        Messages('danger', 'Hiba', 'Hiba történt a táblázat betöltése során! \n', err)
     }
 
 
@@ -141,7 +159,62 @@ async function deleteWeather(id) {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
-            }})
+            }
+        })
+
+        data = await res.json()
+
+
+
+    } catch (err) {
+        Messages('danger', 'Hiba', 'Hiba történt a törlés során! \n', err)
+    }
+
+    loadData()
+}
+
+
+//adat módosítás
+
+
+/*
+async function modWeather(id) {
+    let dataID = document.getElementById('id')
+    let date = document.getElementById('date')
+    let type = document.getElementById('type')
+    let min = document.getElementById('min')
+    let max = document.getElementById('max')
+
+    let newDate = document.getElementById('newDate')
+    let newType = document.getElementById('newType')
+    let newMin = document.getElementById('newMin')
+    let newMax = document.getElementById('newMax')
+
+    newDate.value = date.innerHTML
+    newType.value = type.innerHTML
+    newMin.value = min.innerHTML
+    newMax.value = max.innerHTML
+    
+
+
+
+    
+
+
+    try {
+        const res = await fetch(`${serverURL}/weather/modWeather/`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: {
+                id: dataID,
+                date: newDate,
+                type: newType,
+                min: newMin,
+                max: newMax
+            }
+        })
 
         data =  await res.json()
 
@@ -152,7 +225,7 @@ async function deleteWeather(id) {
     }
 
     loadData()
-}
+}*/
 
 
 
